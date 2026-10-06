@@ -1,0 +1,2 @@
+import {NextResponse} from 'next/server';import {cookies} from 'next/headers';import {verifyToken} from '@/lib/auth';import {connectDB} from '@/lib/mongodb';import User from '@/models/User';
+export async function GET(){const token=(await cookies()).get('odyssey_token')?.value;if(!token)return NextResponse.json({user:null});const p=await verifyToken(token);if(!p?.id)return NextResponse.json({user:null});try{await connectDB();const user=await User.findById(p.id).select('name email');return NextResponse.json({user})}catch{return NextResponse.json({user:null})}}
